@@ -1,7 +1,6 @@
 import CPU from "./CPU.ts";
 import MemoryController from "./MemoryController.ts";
 import Registers from "./Registers.ts";
-import { byte } from "./utils.ts";
 
 abstract class AbstractCore {
     protected cpu: CPU;
@@ -14,7 +13,7 @@ abstract class AbstractCore {
         this.mem = mem;
     }
 
-    abstract execute(instr: byte): void;
+    abstract tick(): void;
 }
 
 export default AbstractCore;

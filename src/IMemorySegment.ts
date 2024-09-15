@@ -1,10 +1,10 @@
-import IMemory from "./IMemory.ts";
+import AbstractMemory from "./AbstractMemory.ts";
 import { word } from "./utils.ts";
 
 interface IMemorySegment {
     startAddr: word,
     endAddr: word,
-    memory: IMemory
+    memory: AbstractMemory
 }
 
 export default IMemorySegment;

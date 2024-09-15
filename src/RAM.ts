@@ -1,14 +1,17 @@
-import IMemory from "./IMemory.ts";
+import AbstractMemory from "./AbstractMemory.ts";
 import { byte, word } from "./utils.ts";
 
-class RAM implements IMemory {
+class RAM extends AbstractMemory {
     private _size: number;
     data: number[];
 
     constructor(size: number = 0xFFFF) {
+        super();
         this._size = size;
         this.data = Array(size).fill(0x00);
     }
+
+    tick(): void {}
 
     get size(): number {
         return this._size;

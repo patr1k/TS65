@@ -1,16 +1,18 @@
 import { byte, word } from "./utils.ts";
 
 class Registers {
+    IR: byte    = 0;  // Instruction Register
     A: byte     = 0;  // Accumulator
     P: byte     = 0;  // Status Flags Register
     PCL: byte   = 0;  // Program Counter (low)
     PCH: byte   = 0;  // Program Counter (high)
-    SP: byte     = 0;  // Stack Pointer
+    SP: byte    = 0;  // Stack Pointer
     X: byte     = 0;  // Index Register X
     Y: byte     = 0;  // Index Register Y
 
     static FLAG_NEGATIVE    = 0b10000000;
     static FLAG_OVERFLOW    = 0b01000000;
+    static FLAG_UNUSED      = 0b00100000;
     static FLAG_BREAK       = 0b00010000;
     static FLAG_DECIMAL     = 0b00001000;
     static FLAG_IRQ_DISABLE = 0b00000100;
@@ -22,8 +24,10 @@ class Registers {
     }
 
     reset() {
+        this.IR = 0;
         this.A = 0;
         this.P = 0b00110110;
+        this.P = Registers.FLAG_BREAK | Registers.FLAG_IRQ_DISABLE | Registers.FLAG_ZERO | Registers.FLAG_BREAK;
         this.PCL = 0;
         this.PCH = 0;
         this.SP = 0xFF;

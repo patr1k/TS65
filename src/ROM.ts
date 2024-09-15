@@ -1,11 +1,12 @@
-import IMemory from "./IMemory.ts";
+import AbstractMemory from "./AbstractMemory.ts";
 import { byte, to_addr, to_hex, word } from "./utils.ts";
 
-class ROM implements IMemory {
+class ROM extends AbstractMemory {
     private _size: number;
     data: number[];
 
     constructor(file: string) {
+        super();
         const bytes = Deno.readFileSync(file);
         this._size = bytes.byteLength;
         this.data = Array.from(bytes);

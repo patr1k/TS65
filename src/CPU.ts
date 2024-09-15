@@ -10,9 +10,12 @@ class CPU {
     protected _core: AbstractCore;
     protected _speed: number = 10;
 
+    protected _IR: byte = 0x00;
+
     constructor(memory: MemoryController, state: Registers) {
         this._state = state;
         this._memory = memory;
+        this._memory.setCPU(this);
         this._core = new Core6502(this, this._state, this._memory);
     }
 
@@ -30,13 +33,11 @@ class CPU {
         console.log('addr instr     disass        |AC XR YR SP|nvdizc');
         console.log('---- --------  --------------|-- -- -- --|------')
 
-        let instr: byte | null = null;
-
-        while (instr !== 0x00) {
-            instr = this.fetchByte();
-            this._core.execute(instr);
+        do {
+            this._core.tick();
+            this._memory.tick();
             await sleep(this._speed);
-        }
+        } while (this._state.IR !== 0x00);
     }
 
     public fetchByte(): byte {
@@ -71,8 +72,8 @@ class CPU {
         return val;
     }
 
-    public noop() {
-
+    public irq() {
+        this._state.PC = this._memory.readWord(0xFFFE);
     }
 }
 

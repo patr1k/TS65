@@ -5,12 +5,13 @@ import { Opcodes } from "./Opcodes.ts";
 class Core extends AbstractCore {
   protected log: string = '';
 
-  public execute(instr: byte) {
-    this.log = to_addr(this.reg.PC - 1) + ' ' + to_hex(instr) + ' ';
+  public tick() {
+    this.reg.IR = this.cpu.fetchByte();
+    this.log = to_addr(this.reg.PC - 1) + ' ' + to_hex(this.reg.IR) + ' ';
 
-    const info = Opcodes[instr];
+    const info = Opcodes[this.reg.IR];
     if (typeof info === 'undefined') {
-      console.log(`Encountered unknown instruction: ${to_hex(instr)}`);
+      console.log(`Encountered unknown instruction: ${to_hex(this.reg.IR)}`);
       Deno.exit();
     }
 
@@ -62,7 +63,7 @@ class Core extends AbstractCore {
 
     this.log += '|';
 
-    switch (instr) {
+    switch (this.reg.IR) {
       case 0x00: this.brk(); break;
 
       case 0x29: this.and_im(value); break;

@@ -1,5 +1,5 @@
 import CPU from "./src/CPU.ts";
-import InterfaceAdapter from "./src/InterfaceAdapter.ts";
+import VIA from "./src/peripherals/W65C22.ts";
 import MemoryController from "./src/MemoryController.ts";
 import RAM from "./src/RAM.ts";
 import ROM from "./src/ROM.ts";
@@ -7,7 +7,7 @@ import Registers from "./src/Registers.ts";
 
 const memory = new MemoryController();
 memory.registerSegment(0x0000, 0x3FFF, new RAM(0x4000));
-memory.registerSegment(0x6000, 0x600F, new InterfaceAdapter());
+memory.registerSegment(0x6000, 0x600F, new VIA());
 memory.registerSegment(0x8000, 0xFFFF, new ROM('rom.bin'));
 
 const state = new Registers();

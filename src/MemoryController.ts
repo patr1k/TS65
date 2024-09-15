@@ -1,11 +1,13 @@
-import IMemory from "./IMemory.ts";
+import AbstractMemory from "./AbstractMemory.ts";
+import CPU from "./CPU.ts";
 import IMemorySegment from "./IMemorySegment.ts";
 import { byte, to_addr, to_hex, word } from "./utils.ts";
 
 class MemoryController {
+    protected cpu: CPU | null = null;
     protected map: IMemorySegment[] = [];
 
-    registerSegment(startAddr: word, endAddr: word, memory: IMemory) {
+    registerSegment(startAddr: word, endAddr: word, memory: AbstractMemory) {
         this.map.push({startAddr, endAddr, memory});
     }
 
@@ -45,6 +47,20 @@ class MemoryController {
     writeWord(data: word, addr: word): void {
         this.setByte(addr, data & 0xFF);
         this.setByte(addr + 1, (data >> 8) & 0xFF);
+    }
+
+    tick(): void {
+        for (const i in this.map) {
+            this.map[i].memory.tick();
+        }
+    }
+
+    setCPU(cpu: CPU): void {
+        this.cpu = cpu;
+    }
+
+    irq(): void {
+        this.cpu!.irq();
     }
 }
 
