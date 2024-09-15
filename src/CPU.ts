@@ -1,16 +1,16 @@
 import AbstractCore from "./AbstractCore.ts";
-import Memory from "./Memory.ts";
+import MemoryController from "./MemoryController.ts";
 import Registers from "./Registers.ts";
 import Core6502 from "./cores/6502/Core.ts";
-import { byte, sleep, word } from "./types.ts";
+import { byte, sleep, word } from "./utils.ts";
 
 class CPU {
     protected _state: Registers;
-    protected _memory: Memory;
+    protected _memory: MemoryController;
     protected _core: AbstractCore;
     protected _speed: number = 10;
 
-    constructor(memory: Memory, state: Registers) {
+    constructor(memory: MemoryController, state: Registers) {
         this._state = state;
         this._memory = memory;
         this._core = new Core6502(this, this._state, this._memory);
@@ -23,7 +23,6 @@ class CPU {
     public reset() {
         this._state.reset();
         this._state.PC = this._memory.readWord(0xFFFC);
-        console.log('Memory size: ' + this._memory.size.toString(16));
         console.log('Reset vector: ' + this._state.PC.toString(16));
     }
 

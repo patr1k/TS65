@@ -1,14 +1,14 @@
 import CPU from "./CPU.ts";
-import Memory from "./Memory.ts";
+import MemoryController from "./MemoryController.ts";
 import Registers from "./Registers.ts";
-import { byte } from "./types.ts";
+import { byte } from "./utils.ts";
 
 abstract class AbstractCore {
     protected cpu: CPU;
     protected reg: Registers;
-    protected mem: Memory;
+    protected mem: MemoryController;
 
-    constructor(cpu: CPU, reg: Registers, mem: Memory) {
+    constructor(cpu: CPU, reg: Registers, mem: MemoryController) {
         this.cpu = cpu;
         this.reg = reg;
         this.mem = mem;

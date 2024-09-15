@@ -1,4 +1,4 @@
-import { byte, word } from "./types.ts";
+import { byte, word } from "./utils.ts";
 
 class Registers {
     A: byte     = 0;  // Accumulator

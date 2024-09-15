@@ -1,4 +1,4 @@
-import { AddrMode, InstrDef } from "../../types.ts";
+import { AddrMode, InstrDef } from "../../utils.ts";
 
 export const Opcodes: Record<number, InstrDef> = {
   0x00: ['BRK', AddrMode.Impl],

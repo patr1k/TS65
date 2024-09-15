@@ -1,5 +1,5 @@
 import AbstractCore from "../../AbstractCore.ts";
-import { AddrMode, byte, to_addr, to_hex, twos_cmpl, word } from "../../types.ts";
+import { AddrMode, byte, to_addr, to_hex, twos_cmpl, word } from "../../utils.ts";
 import { Opcodes } from "./Opcodes.ts";
 
 class Core extends AbstractCore {
@@ -94,7 +94,7 @@ class Core extends AbstractCore {
 
       case 0xC9: this.cmp_im(value); break;
       case 0xC5: this.cmp_zpg(value); break;
-      case 0xD9: this.cmp_zpgx(value); break;
+      case 0xD5: this.cmp_zpgx(value); break;
       case 0xCD: this.cmp_abs(value); break;
       case 0xDD: this.cmp_absx(value); break;
       case 0xD9: this.cmp_absy(value); break;
@@ -136,13 +136,10 @@ class Core extends AbstractCore {
       case 0x8D: this.sta_abs(value); break;
       case 0x85: this.sta_zpg(value); break;
       case 0x20: this.jsr_abs(value); break;
-      case 0x38: this.sec(); break;
       case 0xA5: this.lda_zpg(value); break;
       case 0xE5: this.sbc_zpg(value); break;
       case 0x90: this.bcc(value); break;
-      case 0x58: this.cli(); break;
       case 0x60: this.rts(); break;
-      case 0x2C: this.bit_abs(value); break;
       case 0xE6: this.inc_zpg(value); break;
       case 0xD0: this.bne(value); break;
       case 0x40: this.rti(); break;
