@@ -92,6 +92,46 @@ class Core extends AbstractCore {
       case 0x41: this.eor_indx(value); break;
       case 0x51: this.eor_indy(value); break;
 
+      case 0xC9: this.cmp_im(value); break;
+      case 0xC5: this.cmp_zpg(value); break;
+      case 0xD9: this.cmp_zpgx(value); break;
+      case 0xCD: this.cmp_abs(value); break;
+      case 0xDD: this.cmp_absx(value); break;
+      case 0xD9: this.cmp_absy(value); break;
+      case 0xC1: this.cmp_indx(value); break;
+      case 0xD1: this.cmp_indy(value); break;
+
+      case 0xE0: this.cpx_im(value); break;
+      case 0xE4: this.cpx_zpg(value); break;
+      case 0xEC: this.cpx_abs(value); break;
+
+      case 0xC0: this.cpy_im(value); break;
+      case 0xC4: this.cpy_zpg(value); break;
+      case 0xCC: this.cpy_abs(value); break;
+
+      case 0xEA: this.nop(); break;
+
+      case 0x24: this.bit_zpg(value); break;
+      case 0x2C: this.bit_abs(value); break;
+
+      case 0x18: this.clc(); break;
+      case 0xD8: this.cld(); break;
+      case 0x58: this.cli(); break;
+      case 0xB8: this.clv(); break;
+      case 0x38: this.sec(); break;
+      case 0xF8: this.sed(); break;
+      case 0x78: this.sei(); break;
+
+      case 0x69: this.adc_im(value); break;
+      case 0x65: this.adc_zpg(value); break;
+      case 0x75: this.adc_zpgx(value); break;
+      case 0x6D: this.adc_abs(value); break;
+      case 0x7D: this.adc_absx(value); break;
+      case 0x79: this.adc_absy(value); break;
+      case 0x61: this.adc_indx(value); break;
+      case 0x71: this.adc_indy(value); break;
+
+
       case 0xA9: this.lda_im(value); break;
       case 0x8D: this.sta_abs(value); break;
       case 0x85: this.sta_zpg(value); break;
@@ -99,7 +139,6 @@ class Core extends AbstractCore {
       case 0x38: this.sec(); break;
       case 0xA5: this.lda_zpg(value); break;
       case 0xE5: this.sbc_zpg(value); break;
-      case 0xC9: this.cmp_im(value); break;
       case 0x90: this.bcc(value); break;
       case 0x58: this.cli(); break;
       case 0x60: this.rts(); break;
@@ -307,6 +346,316 @@ class Core extends AbstractCore {
 
 
 
+  protected cmp_im(value: byte) {
+    const result = this.reg.A - value;
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cmp_zpg(value: byte) {
+    const result = this.reg.A - this.mem.readByte(value);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cmp_zpgx(value: byte) {
+    const result = this.reg.A - this.mem.readByte(value + this.reg.X);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cmp_abs(value: byte) {
+    const result = this.reg.A - this.mem.readByte(value);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cmp_absx(value: byte) {
+    const result = this.reg.A - this.mem.readByte(value + this.reg.X);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cmp_absy(value: byte) {
+    const result = this.reg.A - this.mem.readByte(value + this.reg.Y);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cmp_indx(value: byte) {
+    const addr = this.mem.readByte(value + this.reg.X);
+    const result = this.reg.A - this.mem.readByte(addr);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cmp_indy(value: byte) {
+    const addr = this.mem.readByte(value) + this.reg.X;
+    const result = this.reg.A - this.mem.readByte(addr);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+
+
+  protected cpx_im(value: byte) {
+    const result = this.reg.X - value;
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cpx_zpg(value: byte) {
+    const result = this.reg.X - this.mem.readByte(value);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cpx_abs(value: byte) {
+    const result = this.reg.X - this.mem.readByte(value);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+
+
+  protected cpy_im(value: byte) {
+    const result = this.reg.Y - value;
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cpy_zpg(value: byte) {
+    const result = this.reg.Y - this.mem.readByte(value);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+  protected cpy_abs(value: byte) {
+    const result = this.reg.Y - this.mem.readByte(value);
+
+    this.reg.C = result > 0;
+    this.reg.Z = result === 0;
+    this.reg.N = (result & 0x80) > 0;
+  }
+
+
+
+  protected nop() { }
+
+
+  protected bit_zpg(value: word) {
+    const memval = this.mem.readByte(value);
+
+    this.reg.Z = (this.reg.A & memval) === 0;
+    this.reg.V = (memval & 0b01000000) > 0;
+    this.reg.N = (memval & 0b10000000) > 0;
+  }
+
+  protected bit_abs(value: word) {
+    const memval = this.mem.readByte(value);
+
+    this.reg.Z = (this.reg.A & memval) === 0;
+    this.reg.V = (memval & 0b01000000) > 0;
+    this.reg.N = (memval & 0b10000000) > 0;
+  }
+
+
+
+  protected clc() {
+    this.reg.C = false;
+  }
+
+  protected cld() {
+    this.reg.D = false;
+  }
+
+  protected cli() {
+    this.reg.I = false;
+  }
+
+  protected clv() {
+    this.reg.I = false;
+  }
+
+  protected sec() {
+    this.reg.C = true;
+  }
+
+  protected sed() {
+    this.reg.D = true;
+  }
+
+  protected sei() {
+    this.reg.I = true;
+  }
+
+
+
+  protected adc_im(value: byte) {
+    const result = this.reg.A + value + (this.reg.C ? 1 : 0);
+
+    if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
+      this.reg.V = true;
+    } else if ((this.reg.A & 0x80) && (value & 0x80) && !(result & 0x80)) {
+      this.reg.V = true;
+    }
+
+    this.reg.A = result & 0xFF;
+    this.reg.Z = this.reg.A === 0;
+    this.reg.N = (this.reg.A & 0x80) > 0;
+    this.reg.C = (result & 0x100) > 0;
+    this.reg.V = (result & 0x100) > 0;
+  }
+
+  protected adc_zpg(value: byte) {
+    value = this.mem.readByte(value);
+    const result = this.reg.A + value + (this.reg.C ? 1 : 0);
+
+    if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
+      this.reg.V = true;
+    } else if ((this.reg.A & 0x80) && (value & 0x80) && !(result & 0x80)) {
+      this.reg.V = true;
+    }
+
+    this.reg.A = result & 0xFF;
+    this.reg.Z = this.reg.A === 0;
+    this.reg.N = (this.reg.A & 0x80) > 0;
+    this.reg.C = (result & 0x100) > 0;
+    this.reg.V = (result & 0x100) > 0;
+  }
+
+  protected adc_zpgx(value: byte) {
+    value = this.mem.readByte(value + this.reg.X);
+    const result = this.reg.A + value + (this.reg.C ? 1 : 0);
+
+    if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
+      this.reg.V = true;
+    } else if ((this.reg.A & 0x80) && (value & 0x80) && !(result & 0x80)) {
+      this.reg.V = true;
+    }
+
+    this.reg.A = result & 0xFF;
+    this.reg.Z = this.reg.A === 0;
+    this.reg.N = (this.reg.A & 0x80) > 0;
+    this.reg.C = (result & 0x100) > 0;
+    this.reg.V = (result & 0x100) > 0;
+  }
+
+  protected adc_abs(value: byte) {
+    value = this.mem.readByte(value);
+    const result = this.reg.A + value + (this.reg.C ? 1 : 0);
+
+    if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
+      this.reg.V = true;
+    } else if ((this.reg.A & 0x80) && (value & 0x80) && !(result & 0x80)) {
+      this.reg.V = true;
+    }
+
+    this.reg.A = result & 0xFF;
+    this.reg.Z = this.reg.A === 0;
+    this.reg.N = (this.reg.A & 0x80) > 0;
+    this.reg.C = (result & 0x100) > 0;
+    this.reg.V = (result & 0x100) > 0;
+  }
+
+  protected adc_absx(value: byte) {
+    value = this.mem.readByte(value + this.reg.X);
+    const result = this.reg.A + value + (this.reg.C ? 1 : 0);
+
+    if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
+      this.reg.V = true;
+    } else if ((this.reg.A & 0x80) && (value & 0x80) && !(result & 0x80)) {
+      this.reg.V = true;
+    }
+
+    this.reg.A = result & 0xFF;
+    this.reg.Z = this.reg.A === 0;
+    this.reg.N = (this.reg.A & 0x80) > 0;
+    this.reg.C = (result & 0x100) > 0;
+    this.reg.V = (result & 0x100) > 0;
+  }
+
+  protected adc_absy(value: byte) {
+    value = this.mem.readByte(value + this.reg.X);
+    const result = this.reg.A + value + (this.reg.C ? 1 : 0);
+
+    if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
+      this.reg.V = true;
+    } else if ((this.reg.A & 0x80) && (value & 0x80) && !(result & 0x80)) {
+      this.reg.V = true;
+    }
+
+    this.reg.A = result & 0xFF;
+    this.reg.Z = this.reg.A === 0;
+    this.reg.N = (this.reg.A & 0x80) > 0;
+    this.reg.C = (result & 0x100) > 0;
+    this.reg.V = (result & 0x100) > 0;
+  }
+
+  protected adc_indx(value: byte) {
+    const addr = this.mem.readByte(value + this.reg.X);
+    value = this.mem.readByte(addr);
+    const result = this.reg.A + value + (this.reg.C ? 1 : 0);
+
+    if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
+      this.reg.V = true;
+    } else if ((this.reg.A & 0x80) && (value & 0x80) && !(result & 0x80)) {
+      this.reg.V = true;
+    }
+
+    this.reg.A = result & 0xFF;
+    this.reg.Z = this.reg.A === 0;
+    this.reg.N = (this.reg.A & 0x80) > 0;
+    this.reg.C = (result & 0x100) > 0;
+    this.reg.V = (result & 0x100) > 0;
+  }
+
+  protected adc_indy(value: byte) {
+    const addr = this.mem.readByte(value) + this.reg.Y;
+    value = this.mem.readByte(addr);
+    const result = this.reg.A + value + (this.reg.C ? 1 : 0);
+
+    if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
+      this.reg.V = true;
+    } else if ((this.reg.A & 0x80) && (value & 0x80) && !(result & 0x80)) {
+      this.reg.V = true;
+    }
+
+    this.reg.A = result & 0xFF;
+    this.reg.Z = this.reg.A === 0;
+    this.reg.N = (this.reg.A & 0x80) > 0;
+    this.reg.C = (result & 0x100) > 0;
+    this.reg.V = (result & 0x100) > 0;
+  }
+
+
+
   protected lda_im(value: byte) {
     this.reg.A = value;
     this.reg.Z = this.reg.A === 0;
@@ -326,10 +675,6 @@ class Core extends AbstractCore {
     this.reg.PC = value;
   }
 
-  protected sec() {
-    this.reg.C = true;
-  }
-
   protected lda_zpg(value: byte) {
     this.reg.A = this.mem.readByte(value);
     this.reg.Z = this.reg.A === 0;
@@ -345,34 +690,14 @@ class Core extends AbstractCore {
     this.reg.C = (result & 0x100) > 0;
   }
 
-  protected cmp_im(value: byte) {
-    const result = this.reg.A - value;
-
-    this.reg.C = result > 0;
-    this.reg.Z = result === 0;
-    this.reg.N = (result & 0x80) > 0;
-  }
-
   protected bcc(value: byte) {
     if (this.reg.C === false) {
       this.reg.PC += twos_cmpl(value);
     }
   }
 
-  protected cli() {
-    this.reg.I = false;
-  }
-
   protected rts() {
     this.reg.PC = this.cpu.pullWord();
-  }
-
-  protected bit_abs(value: word) {
-    const memval = this.mem.readByte(value);
-
-    this.reg.Z = (this.reg.A & memval) === 0;
-    this.reg.V = (memval & 0b01000000) > 0;
-    this.reg.N = (memval & 0b10000000) > 0;
   }
 
   protected inc_zpg(value: byte) {
