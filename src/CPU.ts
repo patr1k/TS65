@@ -1,7 +1,7 @@
 import AbstractCore from "./AbstractCore.ts";
-import Core6502 from "./Core6502.ts";
 import Memory from "./Memory.ts";
 import Registers from "./Registers.ts";
+import Core6502 from "./cores/6502/Core.ts";
 import { byte, sleep, word } from "./types.ts";
 
 class CPU {
@@ -9,7 +9,7 @@ class CPU {
     protected _memory: Memory;
     protected _core: AbstractCore;
     protected _speed: number = 10;
-    
+
     constructor(memory: Memory, state: Registers) {
         this._state = state;
         this._memory = memory;
@@ -31,7 +31,7 @@ class CPU {
         console.log('addr instr     disass        |AC XR YR SP|nvdizc');
         console.log('---- --------  --------------|-- -- -- --|------')
 
-        let instr: byte|null = null;
+        let instr: byte | null = null;
 
         while (instr !== 0x00) {
             instr = this.fetchByte();

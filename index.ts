@@ -9,4 +9,5 @@ const state = new Registers();
 
 const cpu = new CPU(ram, state);
 cpu.reset();
+cpu.setSpeed(3);
 cpu.run();
