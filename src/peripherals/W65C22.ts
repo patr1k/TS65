@@ -118,7 +118,6 @@ class W65C22 extends AbstractMemory {
     tick(): void {
       if (this.t1_running) {
         this.T1C--;
-        console.log('Timer: ' + this.T1C);
         if (this.T1C === 0) {
             switch (this.data[Reg.ACR] & ACR.T1) {
                 case T1.TIMED_NO_PB:
