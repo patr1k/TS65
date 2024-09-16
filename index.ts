@@ -10,5 +10,5 @@ computer.bus.registerSegment(0x6000, 0x600F, new VIA());
 computer.bus.registerSegment(0x8000, 0xFFFF, new ROM('rom.bin'));
 
 computer.reset();
-computer.setSpeed(3);
+computer.setSpeed(1000);
 computer.run();

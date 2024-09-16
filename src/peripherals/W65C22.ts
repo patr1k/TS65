@@ -71,7 +71,15 @@ class W65C22 extends AbstractMemory {
     }
 
     readByte(addr: word): byte {
-        return this.data[addr];
+        const data = this.data[addr];
+
+        switch (addr) {
+            case Reg.T1CL:
+                this.data[Reg.IFR] &= ~IFR.T1;
+                break;
+        }
+
+        return data;
     }
 
     writeByte(data: byte, addr: word): void {
@@ -79,11 +87,11 @@ class W65C22 extends AbstractMemory {
 
         switch (addr) {
             case Reg.T1CL:
-                this.writeByte(Reg.T1LL, data); 
+                this.data[Reg.T1LL] = data;
                 break;
             case Reg.T1CH:
-                this.writeByte(Reg.T1LH, data);
-                this.writeByte(Reg.T1CL, this.readByte(Reg.T1LL));
+                this.data[Reg.T1LH] = data;
+                this.data[Reg.T1CL] = this.data[Reg.T1LL];
                 this.t1_running = true;
                 break;
         }
@@ -110,7 +118,7 @@ class W65C22 extends AbstractMemory {
     tick(): void {
       if (this.t1_running) {
         this.T1C--;
-        console.log(`Timer: ${this.T1C}`);
+        console.log('Timer: ' + this.T1C);
         if (this.T1C === 0) {
             switch (this.data[Reg.ACR] & ACR.T1) {
                 case T1.TIMED_NO_PB:
@@ -118,6 +126,7 @@ class W65C22 extends AbstractMemory {
                     this.t1_running = false;
                     if ((this.data[Reg.IER] & IER.SET) && (this.data[Reg.IER] & IER.T1)) {
                         // interrupt CPU
+                        console.log('T1 IRQ triggered');
                         this._bus!.irq();
                     }
                     break;
@@ -127,6 +136,7 @@ class W65C22 extends AbstractMemory {
                     this.data[Reg.T1CL] = this.data[Reg.T1LL];
                     if ((this.data[Reg.IER] & IER.SET) && (this.data[Reg.IER] & IER.T1)) {
                         // interrupt CPU
+                        console.log('T1 IRQ triggered');
                         this._bus!.irq();
                     }
                     break;

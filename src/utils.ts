@@ -1,3 +1,5 @@
+import AbstractMemory from "./AbstractMemory.ts";
+
 export type byte = number;
 export type word = number;
 export const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
@@ -42,6 +44,11 @@ export function to_addr(num: number): string {
     }
     return str;
 };
+export interface IMemorySegment {
+    startAddr: word,
+    endAddr: word,
+    memory: AbstractMemory
+};
 export enum AddrMode {
     A = 1,
     Abs = 2,
@@ -58,3 +65,6 @@ export enum AddrMode {
     ZpgY = 13,
 }
 export type InstrDef = [string, AddrMode];
+export const H = (data: word): byte => (data >> 8) & 0xFF;
+export const L = (data: word): byte => data & 0xFF;
+export const HL = (high: byte, low: byte): byte => ((high << 8) + low) & 0xFFFF;

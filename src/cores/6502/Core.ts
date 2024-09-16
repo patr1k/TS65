@@ -661,11 +661,11 @@ class Core extends AbstractCore {
   }
 
   protected sta_abs(value: word) {
-    this.bus.writeWord(this.reg.A, value);
+    this.bus.writeByte(value, this.reg.A);
   }
 
   protected sta_zpg(value: byte) {
-    this.bus.writeWord(this.reg.A, value);
+    this.bus.writeByte(value, this.reg.A);
   }
 
   protected jsr_abs(value: word) {
@@ -695,7 +695,8 @@ class Core extends AbstractCore {
   }
 
   protected rts() {
-    this.reg.PC = this.cpu.pullWord();
+    const addr = this.cpu.pullWord();
+    this.reg.PC = addr;
   }
 
   protected inc_zpg(value: byte) {

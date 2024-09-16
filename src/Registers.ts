@@ -1,4 +1,4 @@
-import { byte, word } from "./utils.ts";
+import { H, HL, L, byte, word } from "./utils.ts";
 
 class Registers {
     A: byte     = 0;  // Accumulator
@@ -34,12 +34,12 @@ class Registers {
     }
 
     get PC(): word {
-        return this.PCL + (this.PCH << 8);
+        return HL(this.PCH, this.PCL);
     }
 
     set PC(val: word) {
-        this.PCL = val & 0xFF;
-        this.PCH = val >> 8;
+        this.PCL = L(val);
+        this.PCH = H(val);
     }
 
     get N(): boolean {
