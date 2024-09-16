@@ -1,7 +1,6 @@
 import AbstractMemory from "./AbstractMemory.ts";
 import CPU from "./CPU.ts";
-import IMemorySegment from "./IMemorySegment.ts";
-import { byte, to_addr, to_hex, word } from "./utils.ts";
+import { byte, to_addr, to_hex, word, IMemorySegment } from "./utils.ts";
 
 class DataBus {
     protected _address: word = 0x0;
