@@ -1,7 +1,6 @@
 import { byte, word } from "./utils.ts";
 
 class Registers {
-    IR: byte    = 0;  // Instruction Register
     A: byte     = 0;  // Accumulator
     P: byte     = 0;  // Status Flags Register
     PCL: byte   = 0;  // Program Counter (low)
@@ -24,7 +23,6 @@ class Registers {
     }
 
     reset() {
-        this.IR = 0;
         this.A = 0;
         this.P = 0b00110110;
         this.P = Registers.FLAG_BREAK | Registers.FLAG_IRQ_DISABLE | Registers.FLAG_ZERO | Registers.FLAG_BREAK;

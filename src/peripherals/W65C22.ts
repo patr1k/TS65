@@ -118,7 +118,7 @@ class W65C22 extends AbstractMemory {
                     this.t1_running = false;
                     if ((this.data[Reg.IER] & IER.SET) && (this.data[Reg.IER] & IER.T1)) {
                         // interrupt CPU
-                        this._controller!.irq();
+                        this._bus!.irq();
                     }
                     break;
                 case T1.CONT_NO_PB:
@@ -127,7 +127,7 @@ class W65C22 extends AbstractMemory {
                     this.data[Reg.T1CL] = this.data[Reg.T1LL];
                     if ((this.data[Reg.IER] & IER.SET) && (this.data[Reg.IER] & IER.T1)) {
                         // interrupt CPU
-                        this._controller!.irq();
+                        this._bus!.irq();
                     }
                     break;
             }

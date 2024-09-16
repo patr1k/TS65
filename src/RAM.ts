@@ -24,6 +24,10 @@ class RAM extends AbstractMemory {
     writeByte(data: byte, addr: word): void {
         this.data[addr] = data;
     }
+
+    reset() {
+        this.data = Array(this._size).fill(0x00);
+    }
 }
 
 export default RAM;

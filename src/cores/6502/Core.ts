@@ -6,12 +6,12 @@ class Core extends AbstractCore {
   protected log: string = '';
 
   public tick() {
-    this.reg.IR = this.cpu.fetchByte();
-    this.log = to_addr(this.reg.PC - 1) + ' ' + to_hex(this.reg.IR) + ' ';
+    this.bus.instruction = this.cpu.fetchByte();
+    this.log = to_addr(this.reg.PC - 1) + ' ' + to_hex(this.bus.instruction) + ' ';
 
-    const info = Opcodes[this.reg.IR];
+    const info = Opcodes[this.bus.instruction];
     if (typeof info === 'undefined') {
-      console.log(`Encountered unknown instruction: ${to_hex(this.reg.IR)}`);
+      console.log(`Encountered unknown instruction: ${to_hex(this.bus.instruction)}`);
       Deno.exit();
     }
 
@@ -63,7 +63,7 @@ class Core extends AbstractCore {
 
     this.log += '|';
 
-    switch (this.reg.IR) {
+    switch (this.bus.instruction) {
       case 0x00: this.brk(); break;
 
       case 0x29: this.and_im(value); break;
@@ -172,51 +172,51 @@ class Core extends AbstractCore {
   }
 
   protected and_zpg(value: byte) {
-    this.reg.A = this.reg.A & this.mem.readByte(value);
+    this.reg.A = this.reg.A & this.bus.readByte(value);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected and_zpgx(value: byte) {
-    this.reg.A = this.reg.A & this.mem.readByte(value + this.reg.X);
+    this.reg.A = this.reg.A & this.bus.readByte(value + this.reg.X);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected and_abs(value: word) {
-    this.reg.A = this.reg.A & this.mem.readByte(value);
+    this.reg.A = this.reg.A & this.bus.readByte(value);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected and_absx(value: byte) {
-    this.reg.A = this.reg.A & this.mem.readByte(value + this.reg.X);
+    this.reg.A = this.reg.A & this.bus.readByte(value + this.reg.X);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected and_absy(value: byte) {
-    this.reg.A = this.reg.A & this.mem.readByte(value + this.reg.Y);
+    this.reg.A = this.reg.A & this.bus.readByte(value + this.reg.Y);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected and_indx(value: byte) {
-    const addr = this.mem.readByte(value + this.reg.X);
-    this.reg.A = this.reg.A & this.mem.readByte(addr);
+    const addr = this.bus.readByte(value + this.reg.X);
+    this.reg.A = this.reg.A & this.bus.readByte(addr);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected and_indy(value: byte) {
-    const addr = this.mem.readByte(value) + this.reg.Y;
-    this.reg.A = this.reg.A & this.mem.readByte(addr);
+    const addr = this.bus.readByte(value) + this.reg.Y;
+    this.reg.A = this.reg.A & this.bus.readByte(addr);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
@@ -232,51 +232,51 @@ class Core extends AbstractCore {
   }
 
   protected ora_zpg(value: byte) {
-    this.reg.A = this.reg.A | this.mem.readByte(value);
+    this.reg.A = this.reg.A | this.bus.readByte(value);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected ora_zpgx(value: byte) {
-    this.reg.A = this.reg.A | this.mem.readByte(value + this.reg.X);
+    this.reg.A = this.reg.A | this.bus.readByte(value + this.reg.X);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected ora_abs(value: word) {
-    this.reg.A = this.reg.A | this.mem.readByte(value);
+    this.reg.A = this.reg.A | this.bus.readByte(value);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected ora_absx(value: byte) {
-    this.reg.A = this.reg.A | this.mem.readByte(value + this.reg.X);
+    this.reg.A = this.reg.A | this.bus.readByte(value + this.reg.X);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected ora_absy(value: byte) {
-    this.reg.A = this.reg.A | this.mem.readByte(value + this.reg.Y);
+    this.reg.A = this.reg.A | this.bus.readByte(value + this.reg.Y);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected ora_indx(value: byte) {
-    const addr = this.mem.readByte(value + this.reg.X);
-    this.reg.A = this.reg.A | this.mem.readByte(addr);
+    const addr = this.bus.readByte(value + this.reg.X);
+    this.reg.A = this.reg.A | this.bus.readByte(addr);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected ora_indy(value: byte) {
-    const addr = this.mem.readByte(value) + this.reg.Y;
-    this.reg.A = this.reg.A | this.mem.readByte(addr);
+    const addr = this.bus.readByte(value) + this.reg.Y;
+    this.reg.A = this.reg.A | this.bus.readByte(addr);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
@@ -292,51 +292,51 @@ class Core extends AbstractCore {
   }
 
   protected eor_zpg(value: byte) {
-    this.reg.A = this.reg.A ^ this.mem.readByte(value);
+    this.reg.A = this.reg.A ^ this.bus.readByte(value);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_zpgx(value: byte) {
-    this.reg.A = this.reg.A ^ this.mem.readByte(value + this.reg.X);
+    this.reg.A = this.reg.A ^ this.bus.readByte(value + this.reg.X);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_abs(value: word) {
-    this.reg.A = this.reg.A ^ this.mem.readByte(value);
+    this.reg.A = this.reg.A ^ this.bus.readByte(value);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_absx(value: byte) {
-    this.reg.A = this.reg.A ^ this.mem.readByte(value + this.reg.X);
+    this.reg.A = this.reg.A ^ this.bus.readByte(value + this.reg.X);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_absy(value: byte) {
-    this.reg.A = this.reg.A ^ this.mem.readByte(value + this.reg.Y);
+    this.reg.A = this.reg.A ^ this.bus.readByte(value + this.reg.Y);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_indx(value: byte) {
-    const addr = this.mem.readByte(value + this.reg.X);
-    this.reg.A = this.reg.A ^ this.mem.readByte(addr);
+    const addr = this.bus.readByte(value + this.reg.X);
+    this.reg.A = this.reg.A ^ this.bus.readByte(addr);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_indy(value: byte) {
-    const addr = this.mem.readByte(value) + this.reg.Y;
-    this.reg.A = this.reg.A ^ this.mem.readByte(addr);
+    const addr = this.bus.readByte(value) + this.reg.Y;
+    this.reg.A = this.reg.A ^ this.bus.readByte(addr);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
@@ -353,7 +353,7 @@ class Core extends AbstractCore {
   }
 
   protected cmp_zpg(value: byte) {
-    const result = this.reg.A - this.mem.readByte(value);
+    const result = this.reg.A - this.bus.readByte(value);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -361,7 +361,7 @@ class Core extends AbstractCore {
   }
 
   protected cmp_zpgx(value: byte) {
-    const result = this.reg.A - this.mem.readByte(value + this.reg.X);
+    const result = this.reg.A - this.bus.readByte(value + this.reg.X);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -369,7 +369,7 @@ class Core extends AbstractCore {
   }
 
   protected cmp_abs(value: byte) {
-    const result = this.reg.A - this.mem.readByte(value);
+    const result = this.reg.A - this.bus.readByte(value);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -377,7 +377,7 @@ class Core extends AbstractCore {
   }
 
   protected cmp_absx(value: byte) {
-    const result = this.reg.A - this.mem.readByte(value + this.reg.X);
+    const result = this.reg.A - this.bus.readByte(value + this.reg.X);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -385,7 +385,7 @@ class Core extends AbstractCore {
   }
 
   protected cmp_absy(value: byte) {
-    const result = this.reg.A - this.mem.readByte(value + this.reg.Y);
+    const result = this.reg.A - this.bus.readByte(value + this.reg.Y);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -393,8 +393,8 @@ class Core extends AbstractCore {
   }
 
   protected cmp_indx(value: byte) {
-    const addr = this.mem.readByte(value + this.reg.X);
-    const result = this.reg.A - this.mem.readByte(addr);
+    const addr = this.bus.readByte(value + this.reg.X);
+    const result = this.reg.A - this.bus.readByte(addr);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -402,8 +402,8 @@ class Core extends AbstractCore {
   }
 
   protected cmp_indy(value: byte) {
-    const addr = this.mem.readByte(value) + this.reg.X;
-    const result = this.reg.A - this.mem.readByte(addr);
+    const addr = this.bus.readByte(value) + this.reg.X;
+    const result = this.reg.A - this.bus.readByte(addr);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -421,7 +421,7 @@ class Core extends AbstractCore {
   }
 
   protected cpx_zpg(value: byte) {
-    const result = this.reg.X - this.mem.readByte(value);
+    const result = this.reg.X - this.bus.readByte(value);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -429,7 +429,7 @@ class Core extends AbstractCore {
   }
 
   protected cpx_abs(value: byte) {
-    const result = this.reg.X - this.mem.readByte(value);
+    const result = this.reg.X - this.bus.readByte(value);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -447,7 +447,7 @@ class Core extends AbstractCore {
   }
 
   protected cpy_zpg(value: byte) {
-    const result = this.reg.Y - this.mem.readByte(value);
+    const result = this.reg.Y - this.bus.readByte(value);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -455,7 +455,7 @@ class Core extends AbstractCore {
   }
 
   protected cpy_abs(value: byte) {
-    const result = this.reg.Y - this.mem.readByte(value);
+    const result = this.reg.Y - this.bus.readByte(value);
 
     this.reg.C = result > 0;
     this.reg.Z = result === 0;
@@ -468,7 +468,7 @@ class Core extends AbstractCore {
 
 
   protected bit_zpg(value: word) {
-    const memval = this.mem.readByte(value);
+    const memval = this.bus.readByte(value);
 
     this.reg.Z = (this.reg.A & memval) === 0;
     this.reg.V = (memval & 0b01000000) > 0;
@@ -476,7 +476,7 @@ class Core extends AbstractCore {
   }
 
   protected bit_abs(value: word) {
-    const memval = this.mem.readByte(value);
+    const memval = this.bus.readByte(value);
 
     this.reg.Z = (this.reg.A & memval) === 0;
     this.reg.V = (memval & 0b01000000) > 0;
@@ -532,7 +532,7 @@ class Core extends AbstractCore {
   }
 
   protected adc_zpg(value: byte) {
-    value = this.mem.readByte(value);
+    value = this.bus.readByte(value);
     const result = this.reg.A + value + (this.reg.C ? 1 : 0);
 
     if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
@@ -549,7 +549,7 @@ class Core extends AbstractCore {
   }
 
   protected adc_zpgx(value: byte) {
-    value = this.mem.readByte(value + this.reg.X);
+    value = this.bus.readByte(value + this.reg.X);
     const result = this.reg.A + value + (this.reg.C ? 1 : 0);
 
     if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
@@ -566,7 +566,7 @@ class Core extends AbstractCore {
   }
 
   protected adc_abs(value: byte) {
-    value = this.mem.readByte(value);
+    value = this.bus.readByte(value);
     const result = this.reg.A + value + (this.reg.C ? 1 : 0);
 
     if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
@@ -583,7 +583,7 @@ class Core extends AbstractCore {
   }
 
   protected adc_absx(value: byte) {
-    value = this.mem.readByte(value + this.reg.X);
+    value = this.bus.readByte(value + this.reg.X);
     const result = this.reg.A + value + (this.reg.C ? 1 : 0);
 
     if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
@@ -600,7 +600,7 @@ class Core extends AbstractCore {
   }
 
   protected adc_absy(value: byte) {
-    value = this.mem.readByte(value + this.reg.X);
+    value = this.bus.readByte(value + this.reg.X);
     const result = this.reg.A + value + (this.reg.C ? 1 : 0);
 
     if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
@@ -617,8 +617,8 @@ class Core extends AbstractCore {
   }
 
   protected adc_indx(value: byte) {
-    const addr = this.mem.readByte(value + this.reg.X);
-    value = this.mem.readByte(addr);
+    const addr = this.bus.readByte(value + this.reg.X);
+    value = this.bus.readByte(addr);
     const result = this.reg.A + value + (this.reg.C ? 1 : 0);
 
     if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
@@ -635,8 +635,8 @@ class Core extends AbstractCore {
   }
 
   protected adc_indy(value: byte) {
-    const addr = this.mem.readByte(value) + this.reg.Y;
-    value = this.mem.readByte(addr);
+    const addr = this.bus.readByte(value) + this.reg.Y;
+    value = this.bus.readByte(addr);
     const result = this.reg.A + value + (this.reg.C ? 1 : 0);
 
     if (!(this.reg.A & 0x80) && !(value & 0x80) && (result & 0x80)) {
@@ -661,11 +661,11 @@ class Core extends AbstractCore {
   }
 
   protected sta_abs(value: word) {
-    this.mem.writeWord(this.reg.A, value);
+    this.bus.writeWord(this.reg.A, value);
   }
 
   protected sta_zpg(value: byte) {
-    this.mem.writeWord(this.reg.A, value);
+    this.bus.writeWord(this.reg.A, value);
   }
 
   protected jsr_abs(value: word) {
@@ -674,13 +674,13 @@ class Core extends AbstractCore {
   }
 
   protected lda_zpg(value: byte) {
-    this.reg.A = this.mem.readByte(value);
+    this.reg.A = this.bus.readByte(value);
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected sbc_zpg(value: byte) {
-    const result = this.reg.A - this.mem.readByte(value) - (1 - (this.reg.C ? 1 : 0));
+    const result = this.reg.A - this.bus.readByte(value) - (1 - (this.reg.C ? 1 : 0));
 
     this.reg.A = result & 0xFF;
     this.reg.Z = this.reg.A === 0;
@@ -699,7 +699,7 @@ class Core extends AbstractCore {
   }
 
   protected inc_zpg(value: byte) {
-    const memval = (this.mem.readByte(value) + 1) & 0xFF;
+    const memval = (this.bus.readByte(value) + 1) & 0xFF;
 
     this.reg.Z = memval === 0;
     this.reg.N = (memval & 0x80) > 0;
