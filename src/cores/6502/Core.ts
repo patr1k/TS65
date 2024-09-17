@@ -133,6 +133,7 @@ class Core extends AbstractCore {
       case 0x71: this.adc_indy(value); break;
 
 
+      case 0x4C: this.jmp_abs(value); break;
       case 0xA9: this.lda_im(value); break;
       case 0x8D: this.sta_abs(value); break;
       case 0x85: this.sta_zpg(value); break;
@@ -144,6 +145,10 @@ class Core extends AbstractCore {
       case 0xE6: this.inc_zpg(value); break;
       case 0xD0: this.bne(value); break;
       case 0x40: this.rti(); break;
+      default:
+        console.log(`Encountered unsupported opcode: ${Opcodes[this.bus.instruction]}`);
+        console.log(this.log);
+        Deno.exit();
     }
 
     this.log += to_hex(this.reg.A);
@@ -157,11 +162,14 @@ class Core extends AbstractCore {
     this.log += (this.reg.Z ? '1' : '0');
     this.log += (this.reg.C ? '1' : '0');
 
-    console.log(this.log);
+    // console.log(this.log);
   }
 
   protected brk() {
-
+    this.cpu.pushWord(this.reg.PC);
+    this.cpu.pushByte(this.reg.P);
+    this.reg.B = true;
+    this.reg.PC = this.bus.readWord(0xFFFE);
   }
 
   protected and_im(value: byte) {
@@ -285,42 +293,42 @@ class Core extends AbstractCore {
 
 
   protected eor_im(value: byte) {
-    this.reg.A = this.reg.A ^ value;
+    this.reg.A ^= value;
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_zpg(value: byte) {
-    this.reg.A = this.reg.A ^ this.bus.readByte(value);
+    this.reg.A ^= this.bus.readByte(value);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_zpgx(value: byte) {
-    this.reg.A = this.reg.A ^ this.bus.readByte(value + this.reg.X);
+    this.reg.A ^= this.bus.readByte(value + this.reg.X);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_abs(value: word) {
-    this.reg.A = this.reg.A ^ this.bus.readByte(value);
+    this.reg.A ^= this.bus.readByte(value);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_absx(value: byte) {
-    this.reg.A = this.reg.A ^ this.bus.readByte(value + this.reg.X);
+    this.reg.A ^= this.bus.readByte(value + this.reg.X);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
   }
 
   protected eor_absy(value: byte) {
-    this.reg.A = this.reg.A ^ this.bus.readByte(value + this.reg.Y);
+    this.reg.A ^= this.bus.readByte(value + this.reg.Y);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
@@ -328,7 +336,7 @@ class Core extends AbstractCore {
 
   protected eor_indx(value: byte) {
     const addr = this.bus.readByte(value + this.reg.X);
-    this.reg.A = this.reg.A ^ this.bus.readByte(addr);
+    this.reg.A ^= this.bus.readByte(addr);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
@@ -336,7 +344,7 @@ class Core extends AbstractCore {
 
   protected eor_indy(value: byte) {
     const addr = this.bus.readByte(value) + this.reg.Y;
-    this.reg.A = this.reg.A ^ this.bus.readByte(addr);
+    this.reg.A ^= this.bus.readByte(addr);
 
     this.reg.Z = this.reg.A === 0;
     this.reg.N = (this.reg.A & 0x80) > 0;
@@ -668,6 +676,10 @@ class Core extends AbstractCore {
     this.bus.writeByte(value, this.reg.A);
   }
 
+  protected jmp_abs(value: word) {
+    this.reg.PC = value;
+  }
+
   protected jsr_abs(value: word) {
     this.cpu.pushWord(this.reg.PC);
     this.reg.PC = value;
@@ -701,6 +713,7 @@ class Core extends AbstractCore {
 
   protected inc_zpg(value: byte) {
     const memval = (this.bus.readByte(value) + 1) & 0xFF;
+    this.bus.writeByte(value, memval);
 
     this.reg.Z = memval === 0;
     this.reg.N = (memval & 0x80) > 0;

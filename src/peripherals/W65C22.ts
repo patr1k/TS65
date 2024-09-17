@@ -59,6 +59,8 @@ const IER = {
 class W65C22 extends AbstractMemory {
     private data: byte[];
 
+    private porta_listeners: ((data: byte) => void)[] = [];
+
     private t1_running = false;
 
     constructor() {
@@ -86,6 +88,11 @@ class W65C22 extends AbstractMemory {
         this.data[addr] = data;
 
         switch (addr) {
+            case Reg.PORTA:
+                for (const i in this.porta_listeners) {
+                    this.porta_listeners[i](data);
+                }
+                break;
             case Reg.T1CL:
                 this.data[Reg.T1LL] = data;
                 break;
@@ -115,6 +122,10 @@ class W65C22 extends AbstractMemory {
         this.data[Reg.T2CH] = val >> 8;
     }
 
+    listenPortA(handler: (data: byte) => void) {
+        this.porta_listeners.push(handler);
+    }
+
     tick(): void {
       if (this.t1_running) {
         this.T1C--;
@@ -125,7 +136,7 @@ class W65C22 extends AbstractMemory {
                     this.t1_running = false;
                     if ((this.data[Reg.IER] & IER.SET) && (this.data[Reg.IER] & IER.T1)) {
                         // interrupt CPU
-                        console.log('T1 IRQ triggered');
+                        // console.log('T1 IRQ triggered');
                         this._bus!.irq();
                     }
                     break;
@@ -135,7 +146,7 @@ class W65C22 extends AbstractMemory {
                     this.data[Reg.T1CL] = this.data[Reg.T1LL];
                     if ((this.data[Reg.IER] & IER.SET) && (this.data[Reg.IER] & IER.T1)) {
                         // interrupt CPU
-                        console.log('T1 IRQ triggered');
+                        // console.log('T1 IRQ triggered');
                         this._bus!.irq();
                     }
                     break;

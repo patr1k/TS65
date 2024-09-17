@@ -5,47 +5,39 @@ import Core6502 from "./cores/6502/Core.ts";
 import { H, HL, L, byte, word } from "./utils.ts";
 
 class CPU {
-    protected _state: Registers;
-    protected _bus: DataBus;
-    protected _core: AbstractCore;
-    protected _speed: number = 10;
-
-    protected _IR: byte = 0x00;
+    protected reg: Registers;
+    protected bus: DataBus;
+    protected core: AbstractCore;
 
     constructor(bus: DataBus) {
-        this._bus = bus;
-        this._bus.setCPU(this);
-        this._state = new Registers();
-        this._core = new Core6502(this, this._state, bus);
-    }
-
-    public setSpeed(hz: number) {
-        this._speed = 1000 / hz;
+        this.bus = bus;
+        this.bus.setCPU(this);
+        this.reg = new Registers();
+        this.core = new Core6502(this, this.reg, bus);
     }
 
     public reset() {
-        this._state.reset();
-        this._state.PC = this._bus.readWord(0xFFFC);
-        console.log('Reset vector: ' + this._state.PC.toString(16));
+        this.reg.reset();
+        this.reg.PC = this.bus.readWord(0xFFFC);
     }
 
     public tick() {
-        this._core.tick();
+        this.core.tick();
     }
 
     public fetchByte(): byte {
-        return this._bus.readByte(this._state.PC++);
+        return this.bus.readByte(this.reg.PC++);
     }
 
     public fetchWord(): word {
-        const word = this._bus.readWord(this._state.PC);
-        this._state.PC += 2;
+        const word = this.bus.readWord(this.reg.PC);
+        this.reg.PC += 2;
         return word;
     }
 
     public pushByte(val: byte): void {
-        this._bus.writeByte(this._state.SP, val);
-        this._state.SP -= 1;
+        this.bus.writeByte(this.reg.SP, val);
+        this.reg.SP -= 1;
     }
 
     public pushWord(val: word): void {
@@ -54,8 +46,8 @@ class CPU {
     }
 
     public pullByte(): byte {
-        this._state.SP += 1;
-        const val = this._bus.readByte(this._state.SP);
+        this.reg.SP += 1;
+        const val = this.bus.readByte(this.reg.SP);
         return val;
     }
 
@@ -66,9 +58,11 @@ class CPU {
     }
 
     public irq() {
-        this.pushWord(this._state.PC);
-        this.pushByte(this._state.P);
-        this._state.PC = this._bus.readWord(0xFFFE);
+        if (!this.reg.I) {
+            this.pushWord(this.reg.PC);
+            this.pushByte(this.reg.P);
+            this.reg.PC = this.bus.readWord(0xFFFE);
+        }
     }
 }
 
