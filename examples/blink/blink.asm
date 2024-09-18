@@ -25,17 +25,22 @@ reset:
   jsr init_timer
 
 loop:
-  sec               ; set carry bit
-  lda ticks         ; load ticks into A
-  sbc toggle_time   ; subtract toggle_time from A
-  cmp #25           ; compare A with 25 (have 250ms elapsed?)
-  bcc loop          ; branch if carry clear
-  lda #$01          ; load 1 into A
-  eor PORTA         ; XOR PORTA with 1 (storing result in A)
-  sta PORTA         ; toggle LED
+  jsr update_led
+  jmp loop
+
+update_led:
+  sec                 ; set carry bit
+  lda ticks           ; load ticks into A
+  sbc toggle_time     ; subtract toggle_time from A
+  cmp #25             ; compare A with 25 (have 250ms elapsed?)
+  bcc exit_update_led ; branch if carry clear
+  lda #$01            ; load 1 into A
+  eor PORTA           ; XOR PORTA with 1 (storing result in A)
+  sta PORTA           ; toggle LED
   lda ticks
   sta toggle_time
-  jmp loop
+exit_update_led:
+  rts
 
 init_timer:
   lda #0

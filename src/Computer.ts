@@ -1,16 +1,15 @@
 import CPU from "./CPU.ts";
 import DataBus from "./DataBus.ts";
-import { sleep } from "./utils.ts";
 
 class Computer {
-    protected _cpu: CPU;
-    protected _bus: DataBus;
+    public cpu: CPU;
+    public bus: DataBus;
     protected _speed: number = 10;
     protected _debug: boolean = false;
 
     constructor() {
-        this._bus = new DataBus();
-        this._cpu = new CPU(this._bus);
+        this.bus = new DataBus();
+        this.cpu = new CPU(this.bus);
     }
 
     public setSpeed(hz: number): void {
@@ -22,7 +21,7 @@ class Computer {
     }
 
     public reset(): void {
-        this._bus.reset();
+        this.bus.reset();
     }
 
     public run() {
@@ -32,18 +31,11 @@ class Computer {
         }
 
         do {
-            this._bus.tick();
+            this.bus.tick();
             // await sleep(this._speed);
-        } while (this._bus.instruction !== 0x00);
-    }
-
-    get bus(): DataBus {
-        return this._bus;
-    }
-
-    get cpu(): CPU {
-        return this._cpu;
+        } while (this.bus.instruction !== 0x00);
     }
 }
 
-export default Computer;
+const comp = new Computer();
+export default comp;

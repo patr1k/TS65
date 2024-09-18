@@ -5,9 +5,9 @@ import Core6502 from "./cores/6502/Core.ts";
 import { H, HL, L, byte, word } from "./utils.ts";
 
 class CPU {
-    protected reg: Registers;
-    protected bus: DataBus;
-    protected core: AbstractCore;
+    public reg: Registers;
+    public bus: DataBus;
+    public core: AbstractCore;
 
     constructor(bus: DataBus) {
         this.bus = bus;
