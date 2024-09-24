@@ -60,6 +60,7 @@ class W65C22 extends AbstractMemory {
     private data: byte[];
 
     private porta_listeners: ((data: byte) => void)[] = [];
+    private portb_listeners: ((data: byte) => void)[] = [];
 
     private t1_running = false;
 
@@ -93,6 +94,11 @@ class W65C22 extends AbstractMemory {
                     this.porta_listeners[i](data);
                 }
                 break;
+            case Reg.PORTB:
+                for (const i in this.portb_listeners) {
+                    this.portb_listeners[i](data);
+                }
+                break;
             case Reg.T1CL:
                 this.data[Reg.T1LL] = data;
                 break;
@@ -124,6 +130,10 @@ class W65C22 extends AbstractMemory {
 
     listenPortA(handler: (data: byte) => void) {
         this.porta_listeners.push(handler);
+    }
+
+    listenPortB(handler: (data: byte) => void) {
+        this.portb_listeners.push(handler);
     }
 
     tick(): void {
